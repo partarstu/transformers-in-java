@@ -1,0 +1,40 @@
+<configuration info="true">
+    <variable name="DEFAULT_LOG_LEVEL" value="${LOG_LEVEL:-info}"/>
+    <variable name="USE_CLOUD" value="${use_cloud_logging:-false}"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${root_path}/logs/test_ai.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${root_path}/logs/%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <maxFileSize>10MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <if condition='property("USE_CLOUD").equalsIgnoreCase("true")'>
+        <then>
+            <appender name="CLOUD" class="com.google.cloud.logging.logback.LoggingAppender">
+                <log>application.log</log> <!-- Optional : default java.log -->
+                <resourceType>gae_app</resourceType> <!-- Optional : default: auto-detected, fallback: global -->
+                <flushLevel>${DEFAULT_LOG_LEVEL}</flushLevel> <!-- Optional : default ERROR -->
+            </appender>
+        </then>
+    </if>
+
+    <root level="${DEFAULT_LOG_LEVEL}">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+        <if condition='property("USE_CLOUD").equalsIgnoreCase("true")'>
+            <then>
+                <appender-ref ref="CLOUD"/>
+            </then>
+        </if>
+    </root>
+</configuration>

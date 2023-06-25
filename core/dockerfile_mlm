@@ -1,0 +1,15 @@
+FROM openjdk:18-jdk-slim-buster
+
+# copy the packaged jar file into our docker image
+COPY target/base_ai_core-1.0-SNAPSHOT-shaded.jar /base_ai_core/
+
+RUN apt-get --assume-yes update; apt-get --assume-yes install nano; apt-get --assume-yes install systemd;
+RUN apt-get --assume-yes update;
+RUN echo "Europe/Vienna" > /etc/timezone
+RUN ln -fs /usr/share/zoneinfo/`cat /etc/timezone` /etc/localtime
+RUN dpkg-reconfigure -f noninteractive tzdata
+
+# set the startup command to execute the jar
+WORKDIR /base_ai_core
+ENTRYPOINT ["java", "-XX:+UseZGC", "-XX:SoftMaxHeapSize=2G", "-XX:ZCollectionInterval=15", "-XX:ZUncommitDelay=10", "-Xmx3G",\
+"--enable-preview", "-jar", "core-0.0.1-SNAPSHOT-shaded.jar"]

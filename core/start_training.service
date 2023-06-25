@@ -1,0 +1,9 @@
+[Unit]
+After=docker.service
+
+[Service]
+ExecStartPre=/bin/sleep 10
+ExecStart=/data/model/run_model_training.sh
+
+[Install]
+WantedBy=default.target
