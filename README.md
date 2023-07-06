@@ -1,6 +1,6 @@
 # Transformers in Java
 
-Transformers-based experimental AI Models written in Java based on [DeepLearning4J](https://deeplearning4j.konduit.ai/) framework
+Transformers-based experimental AI Models written in Java based on [DeepLearning4J](https://deeplearning4j.konduit.ai/) framework. The repository is located [here](https://github.com/partarstu/transformers-in-java).
 
 
 ## Introduction
