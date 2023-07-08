@@ -58,9 +58,11 @@ As mentioned earlier, the documentation for this project is still under developm
 ### Comments 
 The project currently does not have many comments within the code. However, efforts are being made to improve code readability and add comments to enhance understanding.
 
+
 ## License
 
 The project is released under the Apache 2.0 License. Feel free to modify and distribute the code within the terms of the license.
+
 
 ## Acknowledgments
 
@@ -70,7 +72,9 @@ framework.
 I'd like to express my gratitude to all the authors of the original "Attention Is All You Need" [paper](https://arxiv.org/abs/1706.03762)
 as well as to the creators and contributors of DeepLearning4J framework.
 
+
 ## Contact
 
-For any inquiries or further information regarding the project, please create an issue. I'm checking those at a regular basis and will 
-try to answer as soon as possible.
+For any inquiries or additional information regarding the project, please contact me via e-mail. 
+
+In case you notice any bugs or you have any enhancement suggestions - please create an issue. I'm checking those at a regular basis and will try to answer as soon as possible.
