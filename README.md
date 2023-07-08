@@ -66,8 +66,7 @@ The project is released under the Apache 2.0 License. Feel free to modify and di
 
 ## Acknowledgments
 
-This project is inspired by the original "Attention Is All You Need" [paper](https://arxiv.org/abs/1706.03762) and builds upon the DeepLearning4J 
-framework. 
+This project is inspired by the original "Attention Is All You Need" [paper](https://arxiv.org/abs/1706.03762) and is built upon the DeepLearning4J framework. 
 
 I'd like to express my gratitude to all the authors of the original "Attention Is All You Need" [paper](https://arxiv.org/abs/1706.03762)
 as well as to the creators and contributors of DeepLearning4J framework.
