@@ -29,6 +29,7 @@ import org.tarik.core.vocab.PosTagsVocab;
 import org.tarik.core.vocab.WordPieceVocab;
 import org.tarik.train.db.model.wiki.WikiTextArticle;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -149,18 +150,8 @@ public class TrainMlm extends CommonTrainer {
         try {
             addModelSaveSafeShutdownHook();
 
-            Supplier<Collection<WikiTextArticle>> articlesSupplier = () -> {
-                long startPageIndex = lastFetchedPageIndex.get();
-                List<WikiTextArticle> wikiTextArticles = fetchArticlesFromDb(WikiTextArticle.class, articlesFetchStep,
-                        gt("_id", lastFetchedPageIndex.get()));
-                lastFetchedPageIndex.set(getLastPageId(wikiTextArticles));
-                LOG.debug(" Fetching {} articles  - from {} till {}",
-                        lastFetchedPageIndex.get() - startPageIndex, startPageIndex, lastFetchedPageIndex.get());
-                return wikiTextArticles;
-            };
-
-            WikiArticlesContentProvider wikiArticlesContentProvider = new WikiArticlesContentProvider(articlesSupplier,
-                    FETCH_ONLY_ARTICLE_SUMMARY);
+            WikiArticlesContentProvider wikiArticlesContentProvider =
+                    getWikiArticlesContentProvider(lastFetchedPageIndex, articlesFetchStep);
             transformer.setDataProvider(wikiArticlesContentProvider);
 
             Map<String, String> testData = Optional.ofNullable(TEST_DATA_FILE)
@@ -181,6 +172,21 @@ public class TrainMlm extends CommonTrainer {
             // Explicitly calling exit in order to invoke the shutdown hook
             System.exit(-1);
         }
+    }
+
+    @Nonnull
+    private static WikiArticlesContentProvider getWikiArticlesContentProvider(AtomicLong lastFetchedPageIndex, int articlesFetchStep) {
+        Supplier<Collection<WikiTextArticle>> articlesSupplier = () -> {
+            long startPageIndex = lastFetchedPageIndex.get();
+            List<WikiTextArticle> wikiTextArticles = fetchArticlesFromDb(WikiTextArticle.class, articlesFetchStep,
+                    gt("_id", lastFetchedPageIndex.get()));
+            lastFetchedPageIndex.set(getLastPageId(wikiTextArticles));
+            LOG.debug(" Fetching {} articles  - from {} till {}",
+                    lastFetchedPageIndex.get() - startPageIndex, startPageIndex, lastFetchedPageIndex.get());
+            return wikiTextArticles;
+        };
+
+        return new WikiArticlesContentProvider(articlesSupplier, FETCH_ONLY_ARTICLE_SUMMARY);
     }
 
     private static void loadModel(AtomicLong lastFetchedPageIndex, MlmTransformerSdModel transformer)
