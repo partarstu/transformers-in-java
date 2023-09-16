@@ -1,7 +1,11 @@
-FROM openjdk:18-jdk-slim-buster
+ARG java_version=20
+FROM openjdk:${java_version}-jdk-slim-buster
+
+ARG jar_name=train-0.0.1-SNAPSHOT-shaded.jar
+ARG work_dir=model
 
 # copy the packaged jar file into our docker image
-COPY target/core-0.0.1-SNAPSHOT-shaded.jar /core/
+COPY target/${jar_name} /${work_dir}/
 
 RUN apt-get --assume-yes update; apt-get --assume-yes install nano; apt-get --assume-yes install systemd;
 RUN apt-get --assume-yes update;
@@ -10,6 +14,4 @@ RUN ln -fs /usr/share/zoneinfo/`cat /etc/timezone` /etc/localtime
 RUN dpkg-reconfigure -f noninteractive tzdata
 
 # set the startup command to execute the jar
-WORKDIR /core
-ENTRYPOINT ["java", "-XX:+UseZGC", "-XX:SoftMaxHeapSize=2G", "-XX:ZCollectionInterval=15", "-XX:ZUncommitDelay=10", "-Xmx3G",\
-"--enable-preview", "-jar", "core-0.0.1-SNAPSHOT-shaded.jar"]
+WORKDIR /${work_dir}

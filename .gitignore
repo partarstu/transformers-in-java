@@ -26,4 +26,4 @@ target/
 .idea/compiler.xml
 .idea/misc.xml
 batch_train_data_remaining_items.json
-core/transformer_mlm.tar
+docker/*.tar

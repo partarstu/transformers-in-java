@@ -32,12 +32,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <trainer>org.tarik.train.TrainMlm</trainer>
         <java.version>20</java.version>
         <nd4j.backend>nd4j-native</nd4j.backend>
         <deeplearning4j.version>1.0.0-SNAPSHOT</deeplearning4j.version>
         <guava.version>32.0.1-jre</guava.version>
         <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
         <maven.compiler.pugin.version>3.11.0</maven.compiler.pugin.version>
+        <maven.exec.pugin.version>3.0.0</maven.exec.pugin.version>
         <maven.minimum.version>3.3.1</maven.minimum.version>
         <slf4j.version>1.7.30</slf4j.version>
         <jackson.version>2.15.2</jackson.version>
@@ -55,6 +57,12 @@
         <junit.version>5.9.2</junit.version>
         <gson.version>2.10.1</gson.version>
         <jsoup.version>1.16.1</jsoup.version>
+
+        <!-- Properties needed for docker image creation -->
+        <model>transformer_mlm</model>
+        <dockerRoot>..//docker</dockerRoot>
+        <dockerFile>${dockerRoot}//dockerfile_mlm</dockerFile>
+        <dockerArchiveFilePath>${dockerRoot}//${model}.tar</dockerArchiveFilePath>
     </properties>
 
     <repositories>
@@ -226,7 +234,6 @@
         <module>train</module>
     </modules>
 
-    <!-- Maven Enforcer: Ensures user has an up to date version of Maven before building -->
     <build>
         <pluginManagement>
             <plugins>
@@ -263,12 +270,14 @@
                                     </transformer>
                                     <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                     <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <mainClass>${trainer}</mainClass>
                                     </transformer>
                                 </transformers>
                             </configuration>
                         </execution>
                     </executions>
                 </plugin>
+                <!-- Maven Enforcer: Ensures user has an up-to-date version of Maven before building -->
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>1.0.1</version>
@@ -315,14 +324,55 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${maven.exec.pugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>docker-build</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <executable>docker</executable>
+                                <arguments>
+                                    <argument>build</argument>
+                                    <argument>-f</argument>
+                                    <argument>${dockerFile}</argument>
+                                    <argument>-t</argument>
+                                    <argument>${model}:${project.version}</argument>
+                                    <argument>--no-cache</argument>
+                                    <argument>--rm</argument>
+                                    <argument>--build-arg</argument>
+                                    <argument>jar_name=${project.build.finalName}-shaded.jar</argument>
+                                    <argument>--build-arg</argument>
+                                    <argument>java_version=${java.version}</argument>
+                                    <argument>.</argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>export image</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <executable>docker</executable>
+                                <arguments>
+                                    <argument>save</argument>
+                                    <argument>--output</argument>
+                                    <argument>${dockerArchiveFilePath}</argument>
+                                    <argument>${model}:${project.version}</argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
     </build>
 
 </project>

@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="TrainMlm" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="19" />
+    <envs>
+      <env name="dimensions" value="768" />
+      <env name="encoder_type" value="CLASSIC" />
+      <env name="LOG_LEVEL" value="info" />
+      <env name="OMP_NUM_THREADS" value="32" />
+      <env name="test_data_file" value="mlm_test_data_all_wiki_1000.txt" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="org.tarik.train.TrainMlm" />
+    <module name="train" />
+    <shortenClasspath name="NONE" />
+    <option name="VM_PARAMETERS" value="-XX:+UseZGC -XX:SoftMaxHeapSize=2G -XX:ZCollectionInterval=15 -XX:ZUncommitDelay=10 -XX:NativeMemoryTracking=summary -Xmx3G" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
