@@ -242,8 +242,10 @@ public class GenerativeQuestionAnsweringModel extends AbstractTransformerSameDif
 
                 if ((trainingStepsDone + 1) % modelTestFrequency == 0) {
                     testDuringTraining(tester);
+                    sameDiff.getSessions().clear();
                 }
                 ++trainingStepsDone;
+                System.gc();
             }
             ++epochsDone;
             LOG.info("\n\n\n------------------- Done {} epoch in {} minutes\n\n", getCounterEnding(epochsDone),

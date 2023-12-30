@@ -374,26 +374,13 @@ public class MlmTransformerSdModel extends AbstractOpenDatasetTransformerModel<M
                 }
 
                 if (processedStepsAmount % modelTestFrequency == 0) {
-                    // Because inference with sufficient data takes some time, saving the model in parallel is a good
-                    // option of saving time, unless it's the last epoch or near the intermittent save schedule - then
-                    // the model will be saved anyway
-                    if (modelTestFrequency % saveFrequencyInSteps == 0) {
-                        // Doing inference and saving model concurrently. As inference is a read-only operation, should be fine.
-                        int stepsDone = processedStepsAmount;
-                        var saveFuture =
-                                modelSaveExecutor.submit(() -> saveModelDuringTraining(incompleteEpochModelSaver, stepsDone));
-                        tester.accept(this);
-                        saveFuture.get();
-                    } else {
-                        tester.accept(this);
-                    }
-
+                    tester.accept(this);
                     sameDiff.getSessions().clear();
                     System.gc();
                 }
             }
 
-            if (processedStepsAmount % saveFrequencyInSteps == 0 && modelTestFrequency != saveFrequencyInSteps) {
+            if (processedStepsAmount % saveFrequencyInSteps == 0) {
                 LOG.info("Saving a model after {} step", getCounterEnding(processedStepsAmount));
                 completeEpochModelSaver.accept(this, categoriesBufferFromCurrentMiniEpoch);
             }

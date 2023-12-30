@@ -56,10 +56,10 @@ public class TrainGenerativeQa extends CommonTrainer {
     private static final int ENCODER_BATCH_SIZE = TARGET_PASSAGES_AMOUNT * DECODER_BATCH_SIZE;
     private static final double LEARNING_RATE = 1e-5;
     private static final int EPOCHS_AMOUNT = 5000;
-    private static final int TOTAL_TRAIN_QA_ITEMS = 100000;
+    private static final int TOTAL_TRAIN_QA_ITEMS = 10000;
     private static final int STEPS_PER_EPOCH = TOTAL_TRAIN_QA_ITEMS / DECODER_BATCH_SIZE;
     private static final int ALL_STEPS_AMOUNT = STEPS_PER_EPOCH * EPOCHS_AMOUNT;
-    private static final int LOG_FREQ = parseInt(getenv().getOrDefault("log_freq", "10"));
+    private static final int LOG_FREQ = parseInt(getenv().getOrDefault("log_freq", "2"));
     private static final int TESTING_FREQ = parseInt(getenv().getOrDefault("test_freq", "20"));
     private static final int ENCODER_LAYERS_AMOUNT = parseInt(getenv().getOrDefault("layers", "4"));
     private static final int SAVE_FREQ = parseInt(getenv().getOrDefault("save_freq", "50"));
@@ -82,9 +82,9 @@ public class TrainGenerativeQa extends CommonTrainer {
                 .build();
     }
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, CloneNotSupportedException {
+    public static void main(String[] args) {
         prepareEnvironment();
-        startMemoryProfiling(60);
+        startMemoryProfiling(5);
 
         try {
             addModelSaveSafeShutdownHook();

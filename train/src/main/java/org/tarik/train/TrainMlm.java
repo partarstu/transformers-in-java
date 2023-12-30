@@ -101,7 +101,7 @@ public class TrainMlm extends CommonTrainer {
     private static final Path BACKUP_PATH = ROOT_PATH.resolve("wiki_mlm_encoder_model_backup");
     private static final Path LAST_PAGE_INDEX_FILE_PATH = ROOT_PATH.resolve("last_processed_wiki_page.txt");
     private static final int BATCH_SIZE = parseInt(getenv().getOrDefault("batch_size", "128"));
-    private static final int LOG_FREQ = parseInt(getenv().getOrDefault("log_freq", "50"));
+    private static final int LOG_FREQ = parseInt(getenv().getOrDefault("log_freq", "2"));
     private static final int TESTING_FREQ = parseInt(getenv().getOrDefault("test_freq", "100"));
     private static final int SAVE_FREQ = parseInt(getenv().getOrDefault("save_freq", "150"));
     private static final int MIN_SEQUENCE_UTILIZATION = parseInt(getenv().getOrDefault("min_sequence_utilization", "50"));

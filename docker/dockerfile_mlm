@@ -1,7 +1,7 @@
-ARG java_version=20
+ARG java_version=21
 FROM openjdk:${java_version}-jdk-slim-buster
 
-ARG jar_name=train-0.0.1-SNAPSHOT-shaded.jar
+ARG jar_name=train-1.0-SNAPSHOT-shaded.jar
 ARG work_dir=model
 
 # copy the packaged jar file into our docker image

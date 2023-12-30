@@ -51,12 +51,14 @@ import org.tarik.core.vocab.WordPieceVocab;
 import org.tarik.utils.visualisation.charts.ConvergenceChartPlotter;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -286,8 +288,8 @@ public class GenerativeTransformerSdModel extends AbstractOpenDatasetTransformer
         int processedStepsAmount = sameDiff.getTrainingConfig().getIterationCount();
         ExecutorService modelSaveExecutor = newSingleThreadExecutor();
 
-        String plotterName = format("%d_%s", batchSize, "generative-transformer");
         // Listeners
+        String plotterName = GraphicsEnvironment.isHeadless() ? null : format("%d_%s", batchSize, "generative-transformer");
         defaultListener = new CustomListener(loggingFrequency, plotterName, vocab, baseSequenceLength);
         sameDiff.setListeners(defaultListener);
 
@@ -341,24 +343,12 @@ public class GenerativeTransformerSdModel extends AbstractOpenDatasetTransformer
             }
 
             if (processedStepsAmount % modelTestFrequency == 0) {
-                // Because inference with sufficient data takes some time, saving the model in parallel is a good
-                // option of saving time, unless it's the last epoch or near the intermittent save schedule - then
-                // the model will be saved anyway
-                if (modelTestFrequency % saveFrequencyInSteps == 0) {
-                    // Testing and saving model concurrently. As testing is a read-only operation, should be fine.
-                    int stepsDone = processedStepsAmount;
-                    var saveFuture = modelSaveExecutor.submit(() -> saveModelDuringTraining(incompleteEpochModelSaver, stepsDone));
-                    evaluator.accept(this);
-                    saveFuture.get();
-                } else {
-                    evaluator.accept(this);
-                }
-
+                evaluator.accept(this);
                 sameDiff.getSessions().clear();
                 System.gc();
             }
 
-            if (processedStepsAmount % saveFrequencyInSteps == 0 && modelTestFrequency != saveFrequencyInSteps) {
+            if (processedStepsAmount % saveFrequencyInSteps == 0) {
                 LOG.info("Saving a model after {} step", getCounterEnding(processedStepsAmount));
                 completeEpochModelSaver.accept(this, categoriesBufferFromCurrentMiniEpoch);
             }
