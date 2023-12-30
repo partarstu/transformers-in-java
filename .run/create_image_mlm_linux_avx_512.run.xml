@@ -5,6 +5,7 @@
       <option name="myRunnerSettings" />
       <option name="myRunnerParameters">
         <MavenRunnerParameters>
+          <option name="cmdOptions" />
           <option name="profiles">
             <set />
           </option>
@@ -19,10 +20,15 @@
           <option name="profilesMap">
             <map>
               <entry key="linux-512" value="true" />
+              <entry key="with_nlp_models" value="true" />
+              <entry key="logging_local" value="true" />
             </map>
           </option>
+          <option name="projectsCmdOptionValues">
+            <list />
+          </option>
           <option name="resolveToWorkspace" value="false" />
-          <option name="workingDirPath" value="$PROJECT_DIR$/core" />
+          <option name="workingDirPath" value="$PROJECT_DIR$" />
         </MavenRunnerParameters>
       </option>
     </MavenSettings>
