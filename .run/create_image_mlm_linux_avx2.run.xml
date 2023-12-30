@@ -19,9 +19,9 @@
           <option name="pomFileName" value="pom.xml" />
           <option name="profilesMap">
             <map>
-              <entry key="logging_gcp" value="true" />
               <entry key="linux" value="true" />
               <entry key="with_nlp_models" value="true" />
+              <entry key="logging_local" value="true" />
             </map>
           </option>
           <option name="projectsCmdOptionValues">
