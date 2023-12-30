@@ -33,7 +33,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <trainer>org.tarik.train.TrainMlm</trainer>
-        <java.version>20</java.version>
+        <java.version>21</java.version>
         <nd4j.backend>nd4j-native</nd4j.backend>
         <deeplearning4j.version>1.0.0-SNAPSHOT</deeplearning4j.version>
         <guava.version>32.0.1-jre</guava.version>
@@ -41,17 +41,16 @@
         <maven.compiler.pugin.version>3.11.0</maven.compiler.pugin.version>
         <maven.exec.pugin.version>3.0.0</maven.exec.pugin.version>
         <maven.minimum.version>3.3.1</maven.minimum.version>
-        <slf4j.version>1.7.30</slf4j.version>
+        <slf4j.version>2.0.10</slf4j.version>
         <jackson.version>2.15.2</jackson.version>
-        <apache.commons.version>1.10.0</apache.commons.version>
-        <apache.opennlp.version>4.4.0</apache.opennlp.version>
-        <stanford.nlp.version>4.5.4</stanford.nlp.version>
+        <apache.commons.version>1.11.0</apache.commons.version>
+        <stanford.nlp.version>4.5.5</stanford.nlp.version>
         <morphia.version>2.0.2</morphia.version>
-        <logback.version>1.2.10</logback.version>
+        <logback.version>1.4.14</logback.version>
         <jfree.chart.version>1.5.4</jfree.chart.version>
         <lucene.version>8.9.0</lucene.version>
         <java.cpp.version>1.5.6</java.cpp.version>
-        <gcp.logger.version>0.130.2-alpha</gcp.logger.version>
+        <gcp.logger.version>0.130.28-alpha</gcp.logger.version>
         <janino.version>3.1.6</janino.version>
         <google.protobuf.version>3.19.2</google.protobuf.version>
         <junit.version>5.9.2</junit.version>
@@ -86,14 +85,6 @@
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
                 <version>${google.protobuf.version}</version>
-            </dependency>
-
-            <!-- temporary workaround -->
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-reflect</artifactId>
-                <version>1.8.10</version>
-                <scope>runtime</scope>
             </dependency>
 
             <!--Dependencies for different utils-->
@@ -136,6 +127,11 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>

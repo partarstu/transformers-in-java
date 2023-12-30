@@ -31,10 +31,12 @@
     <root level="${DEFAULT_LOG_LEVEL}">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
-        <if condition='property("USE_CLOUD").equalsIgnoreCase("true")'>
-            <then>
-                <appender-ref ref="CLOUD"/>
-            </then>
-        </if>
     </root>
+    <if condition='property("USE_CLOUD").equalsIgnoreCase("true")'>
+        <then>
+            <root>
+                <appender-ref ref="CLOUD"/>
+            </root>
+        </then>
+    </if>
 </configuration>
