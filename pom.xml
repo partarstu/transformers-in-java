@@ -25,36 +25,43 @@
     <groupId>org.tarik</groupId>
     <artifactId>transformers-in-java</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <name>Transformers in Java</name>
     <description>Experimental project for AI and NLP based on Transformer Architecture</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>20</java.version>
+        <trainer>org.tarik.train.TrainMlm</trainer>
+        <java.version>21</java.version>
         <nd4j.backend>nd4j-native</nd4j.backend>
         <deeplearning4j.version>1.0.0-SNAPSHOT</deeplearning4j.version>
         <guava.version>32.0.1-jre</guava.version>
         <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
         <maven.compiler.pugin.version>3.11.0</maven.compiler.pugin.version>
+        <maven.exec.pugin.version>3.0.0</maven.exec.pugin.version>
         <maven.minimum.version>3.3.1</maven.minimum.version>
-        <slf4j.version>1.7.30</slf4j.version>
+        <slf4j.version>2.0.10</slf4j.version>
         <jackson.version>2.15.2</jackson.version>
-        <apache.commons.version>1.10.0</apache.commons.version>
-        <apache.opennlp.version>4.4.0</apache.opennlp.version>
-        <stanford.nlp.version>4.5.4</stanford.nlp.version>
+        <apache.commons.version>1.11.0</apache.commons.version>
+        <stanford.nlp.version>4.5.5</stanford.nlp.version>
         <morphia.version>2.0.2</morphia.version>
-        <logback.version>1.2.10</logback.version>
+        <logback.version>1.4.14</logback.version>
         <jfree.chart.version>1.5.4</jfree.chart.version>
         <lucene.version>8.9.0</lucene.version>
         <java.cpp.version>1.5.6</java.cpp.version>
-        <gcp.logger.version>0.130.2-alpha</gcp.logger.version>
+        <gcp.logger.version>0.130.28-alpha</gcp.logger.version>
         <janino.version>3.1.6</janino.version>
         <google.protobuf.version>3.19.2</google.protobuf.version>
         <junit.version>5.9.2</junit.version>
         <gson.version>2.10.1</gson.version>
         <jsoup.version>1.16.1</jsoup.version>
+
+        <!-- Properties needed for docker image creation -->
+        <model>transformer_mlm</model>
+        <dockerRoot>..//docker</dockerRoot>
+        <dockerFile>${dockerRoot}//dockerfile_mlm</dockerFile>
+        <dockerArchiveFilePath>${dockerRoot}//${model}.tar</dockerArchiveFilePath>
     </properties>
 
     <repositories>
@@ -78,14 +85,6 @@
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
                 <version>${google.protobuf.version}</version>
-            </dependency>
-
-            <!-- temporary workaround -->
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-reflect</artifactId>
-                <version>1.8.10</version>
-                <scope>runtime</scope>
             </dependency>
 
             <!--Dependencies for different utils-->
@@ -128,6 +127,11 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -226,7 +230,6 @@
         <module>train</module>
     </modules>
 
-    <!-- Maven Enforcer: Ensures user has an up to date version of Maven before building -->
     <build>
         <pluginManagement>
             <plugins>
@@ -263,12 +266,14 @@
                                     </transformer>
                                     <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                     <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <mainClass>${trainer}</mainClass>
                                     </transformer>
                                 </transformers>
                             </configuration>
                         </execution>
                     </executions>
                 </plugin>
+                <!-- Maven Enforcer: Ensures user has an up-to-date version of Maven before building -->
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>1.0.1</version>
@@ -315,14 +320,55 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${maven.exec.pugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>docker-build</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <executable>docker</executable>
+                                <arguments>
+                                    <argument>build</argument>
+                                    <argument>-f</argument>
+                                    <argument>${dockerFile}</argument>
+                                    <argument>-t</argument>
+                                    <argument>${model}:${project.version}</argument>
+                                    <argument>--no-cache</argument>
+                                    <argument>--rm</argument>
+                                    <argument>--build-arg</argument>
+                                    <argument>jar_name=${project.build.finalName}-shaded.jar</argument>
+                                    <argument>--build-arg</argument>
+                                    <argument>java_version=${java.version}</argument>
+                                    <argument>.</argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>export image</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <executable>docker</executable>
+                                <arguments>
+                                    <argument>save</argument>
+                                    <argument>--output</argument>
+                                    <argument>${dockerArchiveFilePath}</argument>
+                                    <argument>${model}:${project.version}</argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
     </build>
 
 </project>

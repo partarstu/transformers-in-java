@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="TrainGenerator" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="21" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <envs>
+      <env name="dimensions" value="768" />
+      <env name="encoder_type" value="COMPETENCE_BASED" />
+      <env name="LOG_LEVEL" value="info" />
+      <env name="OMP_NUM_THREADS" value="32" />
+      <env name="test_data_file" value="mlm_test_data_all_wiki_1000.txt" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="org.tarik.train.TrainGenerator" />
+    <module name="train" />
+    <shortenClasspath name="NONE" />
+    <option name="VM_PARAMETERS" value="-XX:+UseZGC -XX:+ZGenerational -Xmx3G" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

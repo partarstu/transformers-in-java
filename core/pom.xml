@@ -23,20 +23,12 @@
     <parent>
         <artifactId>transformers-in-java</artifactId>
         <groupId>org.tarik</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>core</artifactId>
     <name>Core functionality</name>
-
-    <properties>
-        <trainer>org.tarik.train.TrainMlm</trainer>
-        <model>transformer_mlm</model>
-        <dockerFile>dockerfile_mlm</dockerFile>
-        <modelRoot>.</modelRoot>
-        <dockerArchiveFilePath>${modelRoot}//${model}.tar</dockerArchiveFilePath>
-    </properties>
 
     <profiles>
         <profile>
@@ -126,11 +118,6 @@
             <artifactId>gson</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
         </dependency>
@@ -163,59 +150,4 @@
             <artifactId>jsoup</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>docker-build</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${project.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>build</argument>
-                                <argument>-f</argument>
-                                <argument>${dockerFile}</argument>
-                                <argument>-t</argument>
-                                <argument>${model}:${project.version}</argument>
-                                <argument>--no-cache</argument>
-                                <argument>--rm</argument>
-                                <argument>.</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>export image</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${project.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>save</argument>
-                                <argument>--output</argument>
-                                <argument>${dockerArchiveFilePath}</argument>
-                                <argument>${model}:${project.version}</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

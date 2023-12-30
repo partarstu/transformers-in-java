@@ -5,7 +5,7 @@ repository's owner or any of the core contributors. If you need to refer to the 
 the comment to the PR.
 
 IntelliJ's default Code Formatter is currently being used in this project. The corresponding config has been exported into 
-[this XML](intellij_code_style.xml) for IntelliJ users and into [this one](eclipse_code_style.xml) for the Eclipse users.
+[this XML](code_style/intellij_code_style.xml) for IntelliJ users and into [this one](code_style/eclipse_code_style.xml) for the Eclipse users.
 
 Commits should be small and compilable.
 

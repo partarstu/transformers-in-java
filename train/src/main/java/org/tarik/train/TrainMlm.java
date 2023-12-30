@@ -29,6 +29,7 @@ import org.tarik.core.vocab.PosTagsVocab;
 import org.tarik.core.vocab.WordPieceVocab;
 import org.tarik.train.db.model.wiki.WikiTextArticle;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -100,7 +101,7 @@ public class TrainMlm extends CommonTrainer {
     private static final Path BACKUP_PATH = ROOT_PATH.resolve("wiki_mlm_encoder_model_backup");
     private static final Path LAST_PAGE_INDEX_FILE_PATH = ROOT_PATH.resolve("last_processed_wiki_page.txt");
     private static final int BATCH_SIZE = parseInt(getenv().getOrDefault("batch_size", "128"));
-    private static final int LOG_FREQ = parseInt(getenv().getOrDefault("log_freq", "50"));
+    private static final int LOG_FREQ = parseInt(getenv().getOrDefault("log_freq", "2"));
     private static final int TESTING_FREQ = parseInt(getenv().getOrDefault("test_freq", "100"));
     private static final int SAVE_FREQ = parseInt(getenv().getOrDefault("save_freq", "150"));
     private static final int MIN_SEQUENCE_UTILIZATION = parseInt(getenv().getOrDefault("min_sequence_utilization", "50"));
@@ -149,18 +150,8 @@ public class TrainMlm extends CommonTrainer {
         try {
             addModelSaveSafeShutdownHook();
 
-            Supplier<Collection<WikiTextArticle>> articlesSupplier = () -> {
-                long startPageIndex = lastFetchedPageIndex.get();
-                List<WikiTextArticle> wikiTextArticles = fetchArticlesFromDb(WikiTextArticle.class, articlesFetchStep,
-                        gt("_id", lastFetchedPageIndex.get()));
-                lastFetchedPageIndex.set(getLastPageId(wikiTextArticles));
-                LOG.debug(" Fetching {} articles  - from {} till {}",
-                        lastFetchedPageIndex.get() - startPageIndex, startPageIndex, lastFetchedPageIndex.get());
-                return wikiTextArticles;
-            };
-
-            WikiArticlesContentProvider wikiArticlesContentProvider = new WikiArticlesContentProvider(articlesSupplier,
-                    FETCH_ONLY_ARTICLE_SUMMARY);
+            WikiArticlesContentProvider wikiArticlesContentProvider =
+                    getWikiArticlesContentProvider(lastFetchedPageIndex, articlesFetchStep);
             transformer.setDataProvider(wikiArticlesContentProvider);
 
             Map<String, String> testData = Optional.ofNullable(TEST_DATA_FILE)
@@ -181,6 +172,21 @@ public class TrainMlm extends CommonTrainer {
             // Explicitly calling exit in order to invoke the shutdown hook
             System.exit(-1);
         }
+    }
+
+    @Nonnull
+    private static WikiArticlesContentProvider getWikiArticlesContentProvider(AtomicLong lastFetchedPageIndex, int articlesFetchStep) {
+        Supplier<Collection<WikiTextArticle>> articlesSupplier = () -> {
+            long startPageIndex = lastFetchedPageIndex.get();
+            List<WikiTextArticle> wikiTextArticles = fetchArticlesFromDb(WikiTextArticle.class, articlesFetchStep,
+                    gt("_id", lastFetchedPageIndex.get()));
+            lastFetchedPageIndex.set(getLastPageId(wikiTextArticles));
+            LOG.debug(" Fetching {} articles  - from {} till {}",
+                    lastFetchedPageIndex.get() - startPageIndex, startPageIndex, lastFetchedPageIndex.get());
+            return wikiTextArticles;
+        };
+
+        return new WikiArticlesContentProvider(articlesSupplier, FETCH_ONLY_ARTICLE_SUMMARY);
     }
 
     private static void loadModel(AtomicLong lastFetchedPageIndex, MlmTransformerSdModel transformer)

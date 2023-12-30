@@ -19,7 +19,6 @@
 package org.tarik.train;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tarik.core.network.models.transformer.AbstractTransformerSameDiffModel;
@@ -53,7 +52,7 @@ import static org.tarik.utils.CommonUtils.*;
 public class CommonTrainer {
     private static final Logger LOG = LoggerFactory.getLogger(CommonTrainer.class);
     protected static final String MAX_JVM_MEMORY = System.getenv().getOrDefault("max_jvm_memory", "60G");
-    protected static final String DEALLOCATOR_THREADS = System.getenv().getOrDefault("DEALLOCATOR_SERVICE_GC_THREADS", "8");
+    protected static final String DEALLOCATOR_THREADS = System.getenv().getOrDefault("DEALLOCATOR_SERVICE_GC_THREADS", "16");
 
     protected static final AtomicBoolean savingInProgress = new AtomicBoolean(false);
     protected static final AtomicBoolean lastSaveWasSuccessful = new AtomicBoolean(false);

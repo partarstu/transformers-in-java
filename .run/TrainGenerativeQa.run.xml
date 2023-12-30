@@ -1,0 +1,23 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="TrainGenerativeQa" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="18" />
+    <envs>
+      <env name="DEALLOCATOR_SERVICE_GC_THREADS" value="16" />
+      <env name="LOG_LEVEL" value="info" />
+      <env name="OMP_NUM_THREADS" value="32" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="org.tarik.train.TrainGenerativeQa" />
+    <module name="train" />
+    <shortenClasspath name="NONE" />
+    <option name="VM_PARAMETERS" value="-Xmx25G" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="org.tarik.utils.visualisation.charts.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

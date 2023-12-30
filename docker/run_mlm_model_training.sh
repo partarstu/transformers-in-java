@@ -19,6 +19,8 @@ DATA_DIR="/data/model/mlm"
 IMAGE_FILE_NAME="transformer_mlm.tar"
 IMAGE_LAST_TIMESTAMP_FILE_NAME="last_image_timestamp.txt"
 IMAGE_NAME="transformer_mlm:1.0-SNAPSHOT"
+JAR_NAME="train-1.0-SNAPSHOT-shaded.jar"
+RUN_COMMAND="java -XX:+UseZGC -Xmx3G --enable-preview -jar ${JAR_NAME}"
 
 cd ${DATA_DIR}
 
@@ -77,7 +79,7 @@ CONTAINER_ID=$(docker run --name mlm_model -d --net=host --restart on-failure --
 -e test_freq=200 \
 -e use_caching=false \
 -e use_cloud_logging=true \
-${IMAGE_NAME})
+${IMAGE_NAME} ${RUN_COMMAND})
 
 echo '----------------------------------------------------'
 echo
