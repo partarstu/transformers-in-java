@@ -40,14 +40,17 @@ To use the project, follow these steps:
 3. Open the project in your IDE.
 4. Explore the existing code and models to understand their structure and functionality.
 5. Modify and extend the project to suit your specific needs.
-6. Provide the required environment variables before running any sample based on the README documentation 
+6. Provide the required environment variables before running any sample based on the README documentation.
+
+[This Readme file](train//README.md) is an entry point which provides a lot of information on how to run the model training and/or inference.
 
 
 ## Contributing
 
 Contributions to the project are welcome. If you find any issues, have suggestions for improvements, or would like to add new features, 
 please feel free to submit a pull request. However, due to the project being a work in progress, please ensure that your contributions 
-align with the project's direction and goals.
+align with the project's direction and goals. In order to avoid formatting issues, please use the cody style formatter config in 
+[code_style](code_style) folder.
 
 
 ## Notes
